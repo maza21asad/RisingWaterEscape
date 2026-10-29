@@ -21,17 +21,24 @@ public class CatController : MonoBehaviour
     [Header("References")]
     [SerializeField] private Animator animator;           // the cat Model's Animator
 
+    [Header("Squash and Stretch")]
+    [SerializeField] private float squashRecovery = 12f;
+
     private CharacterController cc;
     private Vector3 startPos;
     private Vector3 horizontal;       // current sideways velocity
     private float verticalVelocity;
     private float coyoteTimer;
     private float bufferTimer;
+    private Vector3 baseScale;     // the Model's normal scale
+    private bool wasGrounded;
 
     private void Awake()
     {
         cc = GetComponent<CharacterController>();
         startPos = transform.position;
+
+        baseScale = animator.transform.localScale;
     }
 
     private void OnEnable()
@@ -68,6 +75,7 @@ public class CatController : MonoBehaviour
         bool grounded = cc.isGrounded;
         if (grounded)
         {
+            if (!wasGrounded && verticalVelocity < -5f) Land();
             coyoteTimer = coyoteTime;
             if (verticalVelocity < 0f) verticalVelocity = -2f;   // small push keeps us stuck to the ground
         }
@@ -75,6 +83,7 @@ public class CatController : MonoBehaviour
         {
             coyoteTimer -= dt;
         }
+        wasGrounded = grounded;
 
         bufferTimer -= dt;
         if (playing && Input.GetButtonDown("Jump")) bufferTimer = jumpBuffer;
@@ -85,11 +94,16 @@ public class CatController : MonoBehaviour
             verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
             bufferTimer = 0f;
             coyoteTimer = 0f;
+
+            Kick(0.8f, 1.25f);   
         }
 
         // Releasing the button while rising makes a shorter jump
         if (Input.GetButtonUp("Jump") && verticalVelocity > 0f)
             verticalVelocity *= jumpCut;
+
+        animator.transform.localScale =
+            Vector3.Lerp(animator.transform.localScale, baseScale, squashRecovery * dt);
 
         // 4. Gravity
         verticalVelocity = Mathf.Max(verticalVelocity + gravity * dt, -30f);
@@ -114,6 +128,19 @@ public class CatController : MonoBehaviour
             GameManager.Instance.Fail();
     }
 
+    // Temporarily deforms the Model; the Lerp above eases it back
+    private void Kick(float xz, float y)
+    {
+        animator.transform.localScale = Vector3.Scale(baseScale, new Vector3(xz, y, xz));
+        if (SoundManager.Instance != null) SoundManager.Instance.PlayJump();
+    }
+
+    private void Land()
+    {
+        animator.transform.localScale = Vector3.Scale(baseScale, new Vector3(1.25f, 0.75f, 1.25f));
+        if (SoundManager.Instance != null) SoundManager.Instance.PlayLand();
+    }
+
     private void OnStateChanged(GameState state)
     {
         if (state == GameState.Won) animator.SetTrigger("Win");
@@ -134,5 +161,7 @@ public class CatController : MonoBehaviour
         animator.transform.localRotation = Quaternion.identity;
         animator.Rebind();                // back to the default Animator state
         animator.Update(0f);
+
+        animator.transform.localScale = baseScale;
     }
 }

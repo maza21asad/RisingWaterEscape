@@ -81,9 +81,9 @@ public class MainMenuController : MonoBehaviour
 
     private void OnPlayClicked()
     {
-        Click();
         Hide();
         onPlay.Invoke();
+        Click();
     }
 
     private void OnMusicChanged(float value)
