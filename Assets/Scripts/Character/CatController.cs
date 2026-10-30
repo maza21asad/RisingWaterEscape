@@ -108,6 +108,10 @@ public class CatController : MonoBehaviour
         // 4. Gravity
         verticalVelocity = Mathf.Max(verticalVelocity + gravity * dt, -30f);
 
+        // When the round is lost, stop falling so the camera stays near the action
+        bool failed = GameManager.Instance != null && GameManager.Instance.State == GameState.Failed;
+        if (failed && !grounded) verticalVelocity = 0f;
+
         // 5. Apply movement
         cc.Move((horizontal + Vector3.up * verticalVelocity) * dt);
 

@@ -72,4 +72,5 @@ public class GameManager : MonoBehaviour
     // Right-click the component header in play mode to test without any UI
     [ContextMenu("Debug Win")] private void DebugWin() => Win();
     [ContextMenu("Debug Fail")] private void DebugFail() => Fail();
+    [ContextMenu("Debug Restart")] private void DebugRestart() => Restart();
 }
