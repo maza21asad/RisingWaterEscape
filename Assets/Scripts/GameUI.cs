@@ -22,7 +22,15 @@ public class GameUI : MonoBehaviour
     [SerializeField] private Button failRestartButton;
     [SerializeField] private Button failMenuButton;
 
-    [SerializeField] private int totalCoins = 3;
+    [Header("Star rating")]
+    [SerializeField] private float parTime = 30f;
+    [SerializeField] private Image[] starImages;     // the 3 star images on the Win panel
+    [SerializeField] private Sprite starOn;
+    [SerializeField] private Sprite starOff;
+    [SerializeField] private TMP_Text winHintText;
+
+    private int totalCoins;     // counted automatically from the scene
+    private int coins;          // collected this round
 
     public float ElapsedTime { get; private set; }
 
@@ -36,16 +44,25 @@ public class GameUI : MonoBehaviour
         failMenuButton.onClick.AddListener(OnMenuClicked);
     }
 
+    private void Start()
+    {
+        totalCoins = FindObjectsByType<Coin>(FindObjectsSortMode.None).Length;
+        SetCoins(0);
+        winHintText.text = "3 stars: collect every coin and finish under " + parTime.ToString("0") + " seconds";
+    }
+
     private void OnEnable()
     {
         GameManager.StateChanged += OnStateChanged;
         GameManager.LevelReset += ResetUI;
+        Coin.Collected += OnCoinCollected;
     }
 
     private void OnDisable()
     {
         GameManager.StateChanged -= OnStateChanged;
         GameManager.LevelReset -= ResetUI;
+        Coin.Collected += OnCoinCollected;
     }
 
     private void Update()
@@ -63,13 +80,35 @@ public class GameUI : MonoBehaviour
         counting = state == GameState.Playing;
 
         if (state == GameState.Won)
-            winTimeText.text = "Time: " + FormatTime(ElapsedTime);
+        {
+            winTimeText.text = "Time: " + FormatTime(ElapsedTime) + "   Coins: " + coins + "/" + totalCoins;
+            ShowStars(CalculateStars());
+
+            float best = PlayerPrefs.GetFloat("best_time", float.MaxValue);
+            if (ElapsedTime < best) { best = ElapsedTime; PlayerPrefs.SetFloat("best_time", best); }
+            winHintText.text = "Best time: " + FormatTime(best);
+        }
+    }
+
+    private int CalculateStars()
+    {
+        int stars = 1;                                // finished the level
+        if (coins >= totalCoins) stars++;             // collected every coin
+        if (ElapsedTime <= parTime) stars++;          // finished fast enough
+        return stars;
+    }
+
+    private void ShowStars(int count)
+    {
+        for (int i = 0; i < starImages.Length; i++)
+            starImages[i].sprite = i < count ? starOn : starOff;
     }
 
     private void ResetUI()
     {
         ElapsedTime = 0f;
         timerText.text = FormatTime(0f);
+        coins = 0;
         SetCoins(0);
     }
 
@@ -89,6 +128,12 @@ public class GameUI : MonoBehaviour
     {
         PlayClick();
         GameManager.Instance.GoToMenu();
+    }
+
+    private void OnCoinCollected()
+    {
+        coins++;
+        SetCoins(coins);
     }
 
     private void PlayClick()
