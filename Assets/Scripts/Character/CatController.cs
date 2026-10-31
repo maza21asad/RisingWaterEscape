@@ -20,6 +20,7 @@ public class CatController : MonoBehaviour
 
     [Header("References")]
     [SerializeField] private Animator animator;           // the cat Model's Animator
+    [SerializeField] private ParticleSystem dust;
 
     [Header("Squash and Stretch")]
     [SerializeField] private float squashRecovery = 12f;
@@ -137,12 +138,16 @@ public class CatController : MonoBehaviour
     {
         animator.transform.localScale = Vector3.Scale(baseScale, new Vector3(xz, y, xz));
         if (SoundManager.Instance != null) SoundManager.Instance.PlayJump();
+
+        if (dust != null) dust.Play();
     }
 
     private void Land()
     {
         animator.transform.localScale = Vector3.Scale(baseScale, new Vector3(1.25f, 0.75f, 1.25f));
         if (SoundManager.Instance != null) SoundManager.Instance.PlayLand();
+
+        if (dust != null) dust.Play();
     }
 
     private void OnStateChanged(GameState state)
