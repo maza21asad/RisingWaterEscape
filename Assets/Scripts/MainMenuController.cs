@@ -98,17 +98,6 @@ public class MainMenuController : MonoBehaviour
         Click();
     }
 
-    //private void OnMusicChanged(float value)
-    //{
-    //    PlayerPrefs.SetFloat(MusicKey, value);
-    //    onMusicVolumeChanged.Invoke(value);
-    //}
-
-    //private void OnSfxChanged(float value)
-    //{
-    //    PlayerPrefs.SetFloat(SfxKey, value);
-    //    onSfxVolumeChanged.Invoke(value);
-    //}
     private void OnMusicChanged(float value)
     {
         PlayerPrefs.SetFloat(MusicKey, value);
@@ -121,7 +110,6 @@ public class MainMenuController : MonoBehaviour
         if (SoundManager.Instance != null) SoundManager.Instance.SetSfxVolume(value);
     }
 
-    //private void Click() => onButtonClick.Invoke();
     private void Click()
     {
         onButtonClick.Invoke();
