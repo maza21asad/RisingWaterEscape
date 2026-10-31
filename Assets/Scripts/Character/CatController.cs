@@ -21,6 +21,7 @@ public class CatController : MonoBehaviour
     [Header("References")]
     [SerializeField] private Animator animator;           // the cat Model's Animator
     [SerializeField] private ParticleSystem dust;
+    [SerializeField] private float winTurnSpeed = 6f;     // how fast the cat turns to face the camera on a win
 
     [Header("Squash and Stretch")]
     [SerializeField] private float squashRecovery = 12f;
@@ -58,6 +59,8 @@ public class CatController : MonoBehaviour
     {
         float dt = Time.deltaTime;
         bool playing = GameManager.Instance == null || GameManager.Instance.State == GameState.Playing;
+
+        bool won = GameManager.Instance != null && GameManager.Instance.State == GameState.Won;
 
         // 1. Move relative to the camera
         Vector3 wish = Vector3.zero;
@@ -116,8 +119,19 @@ public class CatController : MonoBehaviour
         // 5. Apply movement
         cc.Move((horizontal + Vector3.up * verticalVelocity) * dt);
 
-        // 6. Face the move direction
-        if (horizontal.sqrMagnitude > 0.1f)
+        // 6. Face the move direction, or face the camera after winning
+        if (won)
+        {
+            Vector3 toCam = Camera.main.transform.position - transform.position;
+            toCam.y = 0f;                                    // turn only around the vertical axis
+            if (toCam.sqrMagnitude > 0.01f)
+            {
+                Quaternion faceCam = Quaternion.LookRotation(toCam);
+                animator.transform.rotation =
+                    Quaternion.Slerp(animator.transform.rotation, faceCam, winTurnSpeed * dt);
+            }
+        }
+        else if (horizontal.sqrMagnitude > 0.1f)
         {
             Quaternion target = Quaternion.LookRotation(horizontal);
             animator.transform.rotation =

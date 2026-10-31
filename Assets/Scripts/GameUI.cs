@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
 
 public class GameUI : MonoBehaviour
 {
@@ -28,6 +29,12 @@ public class GameUI : MonoBehaviour
     [SerializeField] private Sprite starOn;
     [SerializeField] private Sprite starOff;
     [SerializeField] private TMP_Text winHintText;
+
+    [Header("End screen delay (seconds)")]
+    [SerializeField] private float winPanelDelay = 2f;
+    [SerializeField] private float failPanelDelay = 1f;
+
+    private Coroutine panelRoutine;
 
     private int totalCoins;     // counted automatically from the scene
     private int coins;          // collected this round
@@ -74,20 +81,36 @@ public class GameUI : MonoBehaviour
 
     private void OnStateChanged(GameState state)
     {
+        // Cancel a pending panel (for example, if the player restarts during the delay)
+        if (panelRoutine != null)
+        {
+            StopCoroutine(panelRoutine);
+            panelRoutine = null;
+        }
+
         hudPanel.SetActive(state != GameState.Menu);
-        winPanel.SetActive(state == GameState.Won);
-        failPanel.SetActive(state == GameState.Failed);
+        winPanel.SetActive(false);
+        failPanel.SetActive(false);
         counting = state == GameState.Playing;
 
         if (state == GameState.Won)
         {
+            // Calculated now, while the timer and coins are frozen; shown after the delay
             winTimeText.text = "Time: " + FormatTime(ElapsedTime) + "   Coins: " + coins + "/" + totalCoins;
             ShowStars(CalculateStars());
-
-            float best = PlayerPrefs.GetFloat("best_time", float.MaxValue);
-            if (ElapsedTime < best) { best = ElapsedTime; PlayerPrefs.SetFloat("best_time", best); }
-            winHintText.text = "Best time: " + FormatTime(best);
+            panelRoutine = StartCoroutine(ShowPanelAfter(winPanel, winPanelDelay));
         }
+        else if (state == GameState.Failed)
+        {
+            panelRoutine = StartCoroutine(ShowPanelAfter(failPanel, failPanelDelay));
+        }
+    }
+
+    private IEnumerator ShowPanelAfter(GameObject panel, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        panel.SetActive(true);
+        panelRoutine = null;
     }
 
     private int CalculateStars()

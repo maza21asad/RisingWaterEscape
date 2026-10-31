@@ -4005,6 +4005,8 @@ MonoBehaviour:
   starOn: {fileID: 21300000, guid: 36e6127b8a398ca44b8d8bb19b04b4bc, type: 3}
   starOff: {fileID: 21300000, guid: eeae23237be7cc04c8cf38006619369f, type: 3}
   winHintText: {fileID: 1174227721}
+  winPanelDelay: 2
+  failPanelDelay: 1
 --- !u!1 &454708413
 GameObject:
   m_ObjectHideFlags: 0
@@ -4516,6 +4518,7 @@ MonoBehaviour:
   fallY: -10
   animator: {fileID: 2140151902}
   dust: {fileID: 766505303}
+  winTurnSpeed: 6
   squashRecovery: 12
 --- !u!143 &502843353
 CharacterController:
@@ -4972,10 +4975,10 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.1764706, g: 0.654902, b: 0.78431374, a: 0.59607846}
-    m_PressedColor: {r: 0.1764706, g: 0.654902, b: 0.7843138, a: 1}
+    m_HighlightedColor: {r: 0.5566037, g: 0.90498656, b: 1, a: 0.59607846}
+    m_PressedColor: {r: 0.35283017, g: 0.8622153, b: 1, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.21960786, g: 0.6784314, b: 0.8000001, a: 0.53333336}
+    m_DisabledColor: {r: 0.80566037, g: 0.9590311, b: 1, a: 0.53333336}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -13532,10 +13535,10 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.1764706, g: 0.654902, b: 0.78431374, a: 0.59607846}
-    m_PressedColor: {r: 0.1764706, g: 0.654902, b: 0.7843138, a: 1}
+    m_HighlightedColor: {r: 0.5566037, g: 0.90498656, b: 1, a: 0.59607846}
+    m_PressedColor: {r: 0.35283017, g: 0.8622153, b: 1, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.21960786, g: 0.6784314, b: 0.8000001, a: 0.53333336}
+    m_DisabledColor: {r: 0.26777494, g: 0.8406623, b: 0.9924528, a: 0.53333336}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -15879,7 +15882,7 @@ ParticleSystem:
       countCurve:
         serializedVersion: 2
         minMaxState: 0
-        scalar: 30
+        scalar: 20
         minScalar: 30
         maxCurve:
           serializedVersion: 2
@@ -21716,10 +21719,10 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.1764706, g: 0.654902, b: 0.78431374, a: 0.59607846}
-    m_PressedColor: {r: 0.1764706, g: 0.654902, b: 0.7843138, a: 1}
+    m_HighlightedColor: {r: 0.5566037, g: 0.90498656, b: 1, a: 0.59607846}
+    m_PressedColor: {r: 0.35283017, g: 0.8622153, b: 1, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.21960786, g: 0.6784314, b: 0.8000001, a: 0.53333336}
+    m_DisabledColor: {r: 0.26777494, g: 0.8406623, b: 0.9924528, a: 0.53333336}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -22241,10 +22244,10 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.1764706, g: 0.654902, b: 0.78431374, a: 0.59607846}
-    m_PressedColor: {r: 0.1764706, g: 0.654902, b: 0.7843138, a: 1}
+    m_HighlightedColor: {r: 0.5566037, g: 0.90498656, b: 1, a: 0.59607846}
+    m_PressedColor: {r: 0.35283017, g: 0.8622153, b: 1, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.21960786, g: 0.6784314, b: 0.8000001, a: 0.53333336}
+    m_DisabledColor: {r: 0.26777494, g: 0.8406623, b: 0.9924528, a: 0.53333336}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -23376,13 +23379,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SoundManager
   musicSource: {fileID: 2035587670}
   sfxSource: {fileID: 2035587669}
-  music: {fileID: 0}
+  music: {fileID: 8300000, guid: fe302b2aedd253742b71874ea12c5b81, type: 3}
   click: {fileID: 8300000, guid: d87bab140d77d104288bd62530c47589, type: 3}
-  jump: {fileID: 0}
-  land: {fileID: 0}
-  coin: {fileID: 0}
-  win: {fileID: 0}
-  fail: {fileID: 0}
+  jump: {fileID: 8300000, guid: c24b72e4edb1834459ee521790ad6d1d, type: 3}
+  land: {fileID: 8300000, guid: a7299202751fcf5469035d95c6024605, type: 3}
+  coin: {fileID: 8300000, guid: 14717099677a6394eb29e320dbd46adc, type: 3}
+  win: {fileID: 8300000, guid: e47234c331b8f2149beb6415f632ecdf, type: 3}
+  fail: {fileID: 8300000, guid: 4602403bebc45ad4e96fb35aecb4b479, type: 3}
 --- !u!4 &2035587672
 Transform:
   m_ObjectHideFlags: 0

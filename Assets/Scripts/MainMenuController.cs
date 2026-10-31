@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 public class MainMenuController : MonoBehaviour
 {
@@ -41,6 +42,12 @@ public class MainMenuController : MonoBehaviour
         // Application.Quit does nothing in a browser, so hide the button
         quitButton.gameObject.SetActive(false);
 #endif
+
+        // Play a click when the SFX slider is released, so the player hears the new volume
+        var trigger = sfxSlider.gameObject.AddComponent<EventTrigger>();
+        var entry = new EventTrigger.Entry { eventID = EventTriggerType.PointerUp };
+        entry.callback.AddListener(_ => Click());
+        trigger.triggers.Add(entry);
     }
 
     private void Start()
@@ -52,8 +59,13 @@ public class MainMenuController : MonoBehaviour
         musicSlider.SetValueWithoutNotify(music);
         sfxSlider.SetValueWithoutNotify(sfx);
 
-        onMusicVolumeChanged.Invoke(music);
-        onSfxVolumeChanged.Invoke(sfx);
+        //onMusicVolumeChanged.Invoke(music);
+        //onSfxVolumeChanged.Invoke(sfx);
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.SetMusicVolume(music);
+            SoundManager.Instance.SetSfxVolume(sfx);
+        }
 
         ShowMain();
     }
@@ -86,17 +98,35 @@ public class MainMenuController : MonoBehaviour
         Click();
     }
 
+    //private void OnMusicChanged(float value)
+    //{
+    //    PlayerPrefs.SetFloat(MusicKey, value);
+    //    onMusicVolumeChanged.Invoke(value);
+    //}
+
+    //private void OnSfxChanged(float value)
+    //{
+    //    PlayerPrefs.SetFloat(SfxKey, value);
+    //    onSfxVolumeChanged.Invoke(value);
+    //}
     private void OnMusicChanged(float value)
     {
         PlayerPrefs.SetFloat(MusicKey, value);
-        onMusicVolumeChanged.Invoke(value);
+        if (SoundManager.Instance != null) SoundManager.Instance.SetMusicVolume(value);
     }
 
     private void OnSfxChanged(float value)
     {
         PlayerPrefs.SetFloat(SfxKey, value);
-        onSfxVolumeChanged.Invoke(value);
+        if (SoundManager.Instance != null) SoundManager.Instance.SetSfxVolume(value);
     }
 
-    private void Click() => onButtonClick.Invoke();
+    //private void Click() => onButtonClick.Invoke();
+    private void Click()
+    {
+        onButtonClick.Invoke();
+        // Browsers only allow audio after a click, so the first click starts the music.
+        // PlayMusic ignores the call if it is already playing.
+        if (SoundManager.Instance != null) SoundManager.Instance.PlayMusic();
+    }
 }
